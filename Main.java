@@ -1,6 +1,166 @@
 import java.util.Scanner;
 
 public class Main {
+    private static final int MULTIPLICATION_THRESHOLD = 12;
+    
+    public static void main(String[] args) {
+        // Use try-with-resources to automatically close the scanner.
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Enter string: ");
+            String input = scanner.nextLine();
+            int[] unicodeValues = getUnicodeValues(input);
+            int[] diffs = computeUnicodeDifferences(unicodeValues);
+            
+            StringBuilder bfCode = new StringBuilder();
+            for (int diff : diffs) {
+                bfCode.append(generateBrainfuckForValue(Math.abs(diff), 1, diff < 0));
+            }
+            
+            String optimizedCode = removeRedundantShifts(bfCode.toString());
+            System.out.println("Generated Brainfuck code:\n" + optimizedCode);
+        }
+    }
+    
+    /**
+     * Converts the input string to an array of Unicode values,
+     * appending a newline (Unicode value 10) at the end.
+     *
+     * @param input The input string.
+     * @return An array of Unicode values.
+     */
+    private static int[] getUnicodeValues(String input) {
+        int[] unicodeValues = new int[input.length() + 1];
+        for (int i = 0; i < input.length(); i++) {
+            unicodeValues[i] = input.charAt(i);
+        }
+        unicodeValues[input.length()] = 10; // Append trailing newline.
+        return unicodeValues;
+    }
+    
+    /**
+     * Computes the differences between consecutive Unicode values.
+     * This creates relative adjustments to be applied in the Brainfuck code.
+     *
+     * @param unicodeValues The array of Unicode values.
+     * @return An array of differences.
+     */
+    private static int[] computeUnicodeDifferences(int[] unicodeValues) {
+        int[] diffs = new int[unicodeValues.length];
+        int previous = 0;
+        for (int i = 0; i < unicodeValues.length; i++) {
+            diffs[i] = unicodeValues[i] - previous;
+            previous = unicodeValues[i];
+        }
+        return diffs;
+    }
+    
+    /**
+     * Generates Brainfuck code to adjust the current cell by n (absolute value),
+     * using multiplication loops when the adjustment is large.
+     *
+     * @param n              The absolute adjustment needed.
+     * @param registerOffset The register offset for pointer movement.
+     * @param decrement      If true, the operation is a decrement; otherwise, an increment.
+     * @return A String containing the generated Brainfuck code.
+     */
+    private static String generateBrainfuckForValue(int n, int registerOffset, boolean decrement) {
+        StringBuilder output = new StringBuilder();
+        String regForward = ">".repeat(registerOffset);
+        String regBackward = "<".repeat(registerOffset);
+        String symbol = decrement ? "-" : "+";
+        
+        if (n > MULTIPLICATION_THRESHOLD) {
+            // Use multiplication loop for larger adjustments.
+            int[] factorData = searchFactors(n);
+            int outerCount = factorData[0];
+            int innerCount = factorData[1];
+            int adjustment = (decrement ? -1 : 1) * factorData[2];
+            
+            output.append("+".repeat(outerCount))  // Set up loop counter.
+                  .append("[")
+                  .append(regForward)
+                  .append(symbol.repeat(innerCount))
+                  .append(regBackward)
+                  .append("-]")
+                  .append(regForward)
+                  .append(adjustment < 0 ? "-".repeat(-adjustment) : "+".repeat(adjustment));
+        } else {
+            // For small adjustments, use direct increment/decrement.
+            output.append(regForward)
+                  .append(symbol.repeat(n));
+        }
+        
+        output.append(".").append(regBackward); // Print cell and reset pointer.
+        return output.toString();
+    }
+    
+    /**
+     * Searches for a good factor pair (with a minimal difference) for n or nearby numbers.
+     * The method returns an array {factor1, factor2, adjustment} such that:
+     * n = factor1 * factor2 + adjustment.
+     *
+     * @param n The target number.
+     * @return An array with the optimal factors and the required adjustment.
+     */
+    private static int[] searchFactors(int n) {
+        int[] bestFactorPair = {0, Integer.MAX_VALUE};
+        int bestAdjustment = 0;
+        int smallestDiff = Integer.MAX_VALUE;
+        
+        // Search in a neighbourhood of -2 to +2 around n.
+        for (int adjustment = -2; adjustment <= 2; adjustment++) {
+            int candidate = n + adjustment;
+            if (candidate > 0) {
+                int[] factors = getFactorPair(candidate);
+                int diff = Math.abs(factors[0] - factors[1]);
+                // Tie-breaker: prefer pairs with the smallest difference or smallest adjustment.
+                if (diff < smallestDiff || (diff == smallestDiff && Math.abs(adjustment) < Math.abs(bestAdjustment))) {
+                    bestFactorPair = factors;
+                    bestAdjustment = -adjustment;
+                    smallestDiff = diff;
+                }
+            }
+        }
+        return new int[] { bestFactorPair[0], bestFactorPair[1], bestAdjustment };
+    }
+    
+    /**
+     * Finds a factor pair (a, b) for the given positive integer n,
+     * choosing the pair where a is the largest factor not exceeding sqrt(n).
+     *
+     * @param n The number to factor.
+     * @return An array {a, b} such that a * b = n.
+     */
+    private static int[] getFactorPair(int n) {
+        int a = 1;
+        int b = n;
+        int sqrtN = (int) Math.sqrt(n);
+        for (int i = 1; i <= sqrtN; i++) {
+            if (n % i == 0) {
+                a = i;
+                b = n / i;
+            }
+        }
+        return new int[] { a, b };
+    }
+    
+    /**
+     * Optimizes the generated Brainfuck code by removing redundant pointer shifts.
+     * Currently, it removes simple patterns like "<>" or "><".
+     *
+     * @param code The raw Brainfuck code.
+     * @return The optimized Brainfuck code.
+     */
+    private static String removeRedundantShifts(String code) {
+        return code.replaceAll("(<>|><)", "");
+    }
+}
+
+// Previous Code
+/*
+import java.util.Scanner;
+
+public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
@@ -97,7 +257,7 @@ public class Main {
         return brainfuck.replaceAll("(<>|><)", ""); // remove redundant shifts to save characters, currently only checks for single shifts which should be sufficient for current implementation
     }
 }   
-
+*/
 /* old implementation before refactoring from feedback
 
     private static String brainfuckIncrement(int n, int reg) {
