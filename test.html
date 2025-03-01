@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Brainfuck</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .textbox {
+            width: 350px;
+            height: 250px;
+            font-size: 16px;
+            padding: 5px;
+            text-align: left; 
+            vertical-align: top; 
+            resize: none;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+
+        <div class="column">
+            <textarea type="text" class="textbox" id="textInput" placeholder="Enter text here"></textarea>
+            <button onclick="readText('textInput', '1')">Submit</button>
+            <p>Entered Text: <span id="output1"></span></p>
+        </div>
+
+        <div class="column">
+            <textarea type="text" class="textbox" id="codeInput" placeholder="Enter text here"></textarea>
+            <button onclick="readText('codeInput', '2')">Submit</button>
+            <p>Entered Text: <span id="output2"></span></p>
+        </div>
+
+    </div>
+
+
+    <script>
+        function readText(inputID, col) {
+            let textValue = document.getElementById(inputID).value;
+            document.getElementById("output" + col).textContent = textValue;
+        }
+    </script>
+</body>
+</html>
