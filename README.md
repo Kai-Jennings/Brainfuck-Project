@@ -14,7 +14,7 @@ A small recreational project primarily to get a feel for the basics of Java.
 ## Notes on Optimisations
 I did not use any guides or look at any other examples of text to brainfuck converters before making mine, but I did try and implement a number of optimisations that I could think of to try and minimise the outputted brainfuck program's length.
 * **`Unicode Difference`**, instead of treating each unicode value of the string completely seperate and incrementing to its value from 0 every time in a new register, we can use the same register for every output and just increment/decrement between the difference between
-  consecutive unicode values. For example if we wanted to output the string `abc` with corresponding unicode values `97, 98, 99`, we can just increment firstly to `99` and then increment by `1` each time after instead of re-incrementing to `98` or `99` from scratch.
+  consecutive unicode values. For example if we wanted to output the string `abc` with corresponding unicode values `97, 98, 99`, we can just increment firstly to `97` and then increment by `1` each time after instead of re-incrementing to `98` or `99` from scratch.
 * **`Multiplication`**, in order to increment/decrement the tape pointer by a desired amount, the naive solution would be to just output that number of `+` or `-` symbols, ie to increment by 5, output `+++++`, and for smaller values this is indeed the optimal solution,
   but for jumping around between unicode values the program will need to shift by hundreds or even thousands (if you are using say Japanese characters for example) of values and this approach quickly becomes verbose. As such I have implemented support for loops to essentially
   multiply two values together to achieve the desired output using far less symbols. This is done in the form `Factor1 [> Factor2 <-]`, ie to increment by 20, output `++++[>+++++<-]`.
@@ -36,7 +36,7 @@ I did not use any guides or look at any other examples of text to brainfuck conv
 ```
 **`Let's get coding!`** (333 symbols): 
 ```
-+++++++[>+++++++++++<-]>-.<+++++[>+++++<-]>.<++++[>++++<-]>-.<+++++++[>-----------<-]>.<+++++++[>+++++++++++<-]>-.<+++++++++[>--------<-]>--.<++++++++[>+++++++++<-]>-.--.<++++[>++++<-]>-.<+++++++[>------------<-]>.<++++++[>+++++++++++<-]>+.++++++++++++.-----------.++++++++++.-------.<++++++++[>---------<-]>++.<+++++[>-----<-]>++.<
++++++++[>+++++++++++<-]>-.<+++++[>+++++<-]>.<++++[>++++<-]>-.<+++++++[>-----------<-]>.<+++++++[>+++++++++++<-]>-.<+++++++++[>---------<-]>--.<++++++++[>+++++++++<-]>-.--.<++++[>++++<-]>-.<+++++++[>------------<-]>.<++++++[>+++++++++++<-]>+.++++++++++++.-----------.+++++.+++++.-------.<++++++++[>---------<-]>++.<+++++[>-----<-]>++.<
 ```
 **`Lorem ipsum first paragraph`** (6543 symbols):
 ```
