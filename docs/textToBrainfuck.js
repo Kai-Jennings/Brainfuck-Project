@@ -89,5 +89,5 @@ function getUnicodeDiff(unicode) {
 }
 
 function removeRedundantShifts(brainfuck) {
-    return brainfuck.replaceAll("(<>|><)", "");
+    return brainfuck.replace(/<>|></g, "");
 }
