@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Brainfuck</title>
+    <style>
+        .container {
+            padding-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+            gap: 50px;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .textbox {
+            width: 350px;
+            height: 250px;
+            font-size: 16px;
+            padding: 5px;
+            text-align: left; 
+            vertical-align: top; 
+            font-family: monospace;
+            resize: none;
+        }
+        .displaybox {
+            width: 350px;
+            height: 150px;
+            border: 1px solid;
+            font-size: 16px;
+            padding: 5px;
+            text-align: left; 
+            vertical-align: top; 
+            background-color: #ffffff;
+            font-family: monospace;
+            overflow: auto;
+        }
+    </style>
+
+</head>
+<body style="background-color: #f0f0f0";>
+    <div class="container">
+
+        <div class="column">
+            <textarea type="text" class="textbox" id="textInput" placeholder="Enter text here"></textarea>
+            <div class="row">
+                <button style="font-family: monospace" onclick="processInput('textInput', 'output1')">Convert to Brainfuck</button>
+                <button id="copyOutput2" style="font-family: monospace" onclick="copyToClipboard('output1', 'copyOutput1')">Copy Output</button>
+            </div>
+            <div class="displaybox"><span id="output1"></span></div> 
+        </div>
+
+        <div class="column">
+            <textarea type="text" class="textbox" id="codeInput" placeholder="Enter brainfuck here"></textarea>
+            <div class="row">
+                <button style="font-family: monospace" onclick="runBrainfuck('codeInput', 'output2')">Run Program</button>
+                <button id="copyOutput2" style="font-family: monospace" onclick="copyToClipboard('output2', 'copyOutput2', `Copy Output`)">Copy Output</button>
+            </div>
+            <div class="displaybox"><span id="output2"></span></div> 
+        </div>
+
+    </div>
+
+
+    <script src="brainfuckInterpreter.js"></script>
+    <script src="textToBrainfuck.js"></script>
+    <script>
+        function readText(inputID, outputID) {
+            let textValue = document.getElementById(inputID).value;
+            document.getElementById(outputID).textContent = textValue;
+        }
+
+        function copyToClipboard(textID, buttonID, buttonDefault) {
+            const textElement = document.getElementById(textID);
+            const button = document.getElementById(buttonID);
+            
+            const textToCopy = textElement.textContent || textElement.innerText;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    button.textContent = "Copied!";
+                    setTimeout(() => {
+                        button.textContent = "Copy Output";
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error("Failed to copy: ", err);
+                });
+        }
+    </script>
+</body>
+</html>
