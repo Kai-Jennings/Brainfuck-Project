@@ -57,7 +57,7 @@
             <textarea type="text" class="textbox" id="textInput" placeholder="Enter text here"></textarea>
             <div class="row">
                 <button style="font-family: monospace" onclick="processInput('textInput', 'output1')">Convert to Brainfuck</button>
-                <button id="copyOutput2" style="font-family: monospace" onclick="copyToClipboard('output1', 'copyOutput1')">Copy Output</button>
+                <button id="copyOutput1" style="font-family: monospace" onclick="copyToClipboard('output1', 'copyOutput1')">Copy Output</button>
             </div>
             <div class="displaybox"><span id="output1"></span></div> 
         </div>
@@ -87,7 +87,7 @@
             const button = document.getElementById(buttonID);
             
             const textToCopy = textElement.textContent || textElement.innerText;
-            navigator.clipboard.writeText(textToCopy)
+            navigator.clipboard.writeText(textToCopy.trim())
                 .then(() => {
                     button.textContent = "Copied!";
                     setTimeout(() => {
