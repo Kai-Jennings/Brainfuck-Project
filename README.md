@@ -1,12 +1,13 @@
 ## Brainfuck Project
 A small recreational project primarily to get a feel for the basics of Java.
+### [Website!](https://kai-jennings.github.io/Brainfuck-Project/)
 
 ### Some Notes:
 * `Main.java` is a text to brainfuck converter, you enter a strring of text and it will return a corresponding brainfuck program that prints out the string.
 * `main.py` is a brainfuck interpreter, it is **not** fully feature complete as I never implemented the `,` operator which reads user input. I added some error messages for things such as unexpected characters and unmatched brackets, however there are still lots of cases where no error is thrown, such as:
     * Runtime errors
-    * Tape pointer decrementing below 0
-    * Trying to print an invalid unicode character
+    * ~~Tape pointer decrementing below 0~~
+    * ~~Trying to print an invalid unicode character~~
 * Neither program is commented super well, I did end up leaving some comments around `Main.java` but I'm unsure of how helpful they will be.
 * My text to brainfuck converter only uses two memory cells, one to initialise loops and one to store the current unicode value. At the end of the program the loop cell should be `0` since all loops are complete and the unicode cell should be the last unicode value of the string, which should always be `10`
   since it adds a trailing newline. So in general all programs produced by my converter should terminate in the form `0 10` with the tape pointer at index `0`.
