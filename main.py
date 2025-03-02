@@ -17,6 +17,8 @@ class BrainFuck:
     
     def decrement_pointer(self):
         self.data_pointer -= 1
+        if self.data_pointer < 0:
+            raise IndexError("Tape pointer decremented below 0")
     
     def increment_tape(self):
         self.tape[self.data_pointer] += 1
@@ -25,7 +27,10 @@ class BrainFuck:
         self.tape[self.data_pointer] -= 1
     
     def output(self):
-        print(chr(self.tape[self.data_pointer]), end="")
+        if self.tape[self.data_pointer] in range(1, 0x110000):
+            print(chr(self.tape[self.data_pointer]), end="")
+        else:
+            raise ValueError(f"Could not convert {self.tape[self.data_pointer]} to unicode character")
     
     def loop_left(self):
         if self.tape[self.data_pointer] == 0:
